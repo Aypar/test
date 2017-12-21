@@ -138,7 +138,7 @@ class BrokerWorker {
                         }
                         if (order.type === OrderTypes.ask) {
                             update_exchange_message.ask = {
-                                type: OrderTypes.bid,
+                                type: OrderTypes.ask,
                                 rate: order.rate,
                                 amount: order.amount
                             }

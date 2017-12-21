@@ -13,32 +13,32 @@ export class MarketComponent {
   bid_price: number;
   ask_amount: number;
   ask_price: number;
-  bids: {[key:string]:number} = {};
-  asks: {[key:string]:number} = {};
+  bids: { [key: string]: number } = {};
+  asks: { [key: string]: number } = {};
 
   constructor(webSocketService: WebSocketService) {
 
     this.webSocket = webSocketService.connect();
-    // for(let i = 0; i < 10000;i++)
-    // {
-    //   this.webSocket.emit('bid', {
-    //     member: '5a3926a25e2afeb4401e1bdf',
-    //     amount: 10 *Math.random(),
-    //     rate: Math.random(),
-    //     market: '5a39277a5e2afeb4401e1be6',
-    //   });
-    //   this.webSocket.emit('ask', {
-    //     member: '5a3926a25e2afeb4401e1bdf',
-    //     amount: 10* Math.random(),
-    //     rate: Math.random(),
-    //     market: '5a39277a5e2afeb4401e1be6',
-    //   });
-    // }
+    for(let i = 0; i < 1000;i++)
+    {
+      this.webSocket.emit('bid', {
+        member: '5a3926a25e2afeb4401e1bdf',
+        amount: 10 *Math.random(),
+        rate: Math.random(),
+        market: '5a39277a5e2afeb4401e1be6',
+      });
+      this.webSocket.emit('ask', {
+        member: '5a3926a25e2afeb4401e1bdf',
+        amount: 10* Math.random(),
+        rate: Math.random(),
+        market: '5a39277a5e2afeb4401e1be6',
+      });
+    }
     this.webSocket.on('exchange_state', (message) => {
 
       this.onExchangeState(message);
     });
-    this.webSocket.on('update_exchange_state', (message) => {
+    this.webSocket.on('update_exchange', (message) => {
       this.onExchangeUpdate(message);
     });
   }
@@ -82,18 +82,19 @@ export class MarketComponent {
         this.asks[key] += Number(ask.amount)
       })
     });
-console.log(Object.keys(this.asks));
+    console.log(Object.keys(this.asks));
   }
 
   onExchangeUpdate(message: any) {
 
-    if (message.bid) {
+    console.log(message);
+    if (message.bid && message.bid.type) {
       let key = message.bid.rate.toString();
       this.bids[key] = this.bids[key] || 0;
       this.bids[key] += message.bid.amount;
     }
 
-    if (message.ask) {
+    if (message.ask && message.ask.type) {
       let key = message.ask.rate.toString();
       this.asks[key] = this.asks[key] || 0;
       this.asks[key] += message.ask.amount;
@@ -101,15 +102,23 @@ console.log(Object.keys(this.asks));
 
     message.fills.forEach((fill) => {
       if (fill.type === 'ask') {
-        this.asks[fill.rate] -= fill.amount;
-        if (this.asks[fill.rate] === 0) {
+        if (!this.bids[fill.rate])
+          return;
+        this.bids[fill.rate] -= Number(fill.amount);
+        this.asks[fill.rate] -= Number(fill.amount);
+        if (this.bids[fill.rate] === 0) {
+          delete this.bids[fill.rate];
           delete this.asks[fill.rate];
         }
       }
-      if (fill.type === 'fill') {
-        this.bids[fill.rate] -= fill.amount;
-        if (this.bids[fill.rate] === 0) {
+      if (fill.type === 'bid') {
+        if (!this.asks[fill.rate])
+          return;
+        this.asks[fill.rate] -= Number(fill.amount);
+        this.bids[fill.rate] -= Number(fill.amount);
+        if (this.asks[fill.rate] === 0) {
           delete this.bids[fill.rate];
+          delete this.asks[fill.rate];
         }
       }
 

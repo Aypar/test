@@ -54,9 +54,10 @@ class SocketServer {
     }
 
     handleUpdateExchangeState() {
-        this.mq.listen('update_exchange_state', true);
-        this.mq.on('update_exchange_state', (message, args) => {
-            this.io.emit('update_exchange_state', message)
+        this.mq.listen(AmqpQueues.update_exchange, true);
+        this.mq.on(AmqpQueues.update_exchange, (message, args) => {
+            console.log('upadate exchange',message);
+            this.io.emit(AmqpQueues.update_exchange, message)
             args.success();
         });
 
