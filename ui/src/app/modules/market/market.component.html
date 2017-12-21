@@ -1,0 +1,48 @@
+<div class="container">
+  <div class="row mt-3">
+    <div class="col-sm">
+      <input type="number" placeholder="Amount" [(ngModel)]="amount" class="form-control mt-1">
+      <input type="number" placeholder="Price" [(ngModel)]="bid_price" class="form-control mt-1">
+      <button (click)="buyOrder()" class="btn btn-primary btn-block mt-1">Buy</button>
+    </div>
+    <div class="col-sm">
+      <input type="number" placeholder="Amount" [(ngModel)]="ask_amount" class="form-control mt-1">
+      <input type="number" placeholder="Price" [(ngModel)]="ask_price" class="form-control mt-1">
+      <button (click)="sellOrder()" class="btn btn-danger btn-block mt-1">Sell</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm">
+      Bids
+      <table class="table">
+        <thead>
+        <tr>
+          <th>Amount</th>
+          <th>Price</th>
+        </tr>
+        </thead>
+
+        <tr *ngFor="let key of bids | keys">
+          <td>{{key}}</td>
+          <td>{{bids[key]}}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="col-sm">
+      Asks
+      <table class="table">
+        <thead>
+        <tr>
+          <th>Amount</th>
+          <th>Price</th>
+        </tr>
+        </thead>
+        <tr *ngFor="let key of asks | keys ">
+          <td>{{key}}</td>
+          <td>{{asks[key]}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

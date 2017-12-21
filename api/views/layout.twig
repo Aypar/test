@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ title }}</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let socket = io('http://localhost:3000');
+
+        socket.emit('ask',{
+            member:'5a3926a25e2afeb4401e1bdf',
+            amount:100,
+            rate:1.98765432,
+            market:'5a39277a5e2afeb4401e1be6',
+        })
+    </script>
+  </head>
+  <body>
+    {% block body %}{% endblock %}
+  </body>
+</html>
